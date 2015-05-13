@@ -60,15 +60,9 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     //The user selected a cell
-    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         //get the info
         let student = OTMClient.sharedInstance().studentInfo[indexPath.row]
-        println("Row \(indexPath.row) selected")
-        var count: Int = 0
-        for each in OTMClient.sharedInstance().studentInfo{
-            println("In position \(count): \(each.firstName) \(each.lastName)")
-            ++count
-        }
         let app = UIApplication.sharedApplication()
         //TODO: Need to check for URL validity here - if invalid pop an alert
         if OTMClient.sharedInstance().validateUrl(student.mediaURL) == false{
@@ -87,6 +81,9 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     //UI Action functions
     //***************************************************
     @IBAction func addLocationButtonTouch(sender: AnyObject) {
+        let controller = self.storyboard?.instantiateViewControllerWithIdentifier("LocationViewController") as! UIViewController
+        self.navigationController!.presentViewController(controller, animated: true, completion: nil)
+
     }
     
     @IBAction func reloadButtonTouch(sender: AnyObject) {

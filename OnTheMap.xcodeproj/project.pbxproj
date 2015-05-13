@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A81D1CA41B03E4EB00981A33 /* LocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81D1CA31B03E4EB00981A33 /* LocationViewController.swift */; };
 		A84D2A741AEFD11100F70E55 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84D2A731AEFD11100F70E55 /* AppDelegate.swift */; };
 		A84D2A761AEFD11100F70E55 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84D2A751AEFD11100F70E55 /* LoginViewController.swift */; };
 		A84D2A791AEFD11200F70E55 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84D2A771AEFD11200F70E55 /* Main.storyboard */; };
@@ -32,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A81D1CA31B03E4EB00981A33 /* LocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationViewController.swift; sourceTree = "<group>"; };
 		A84D2A6E1AEFD10F00F70E55 /* OnTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84D2A721AEFD11100F70E55 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A84D2A731AEFD11100F70E55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				A84D2A731AEFD11100F70E55 /* AppDelegate.swift */,
+				A81D1CA31B03E4EB00981A33 /* LocationViewController.swift */,
 				A84D2A751AEFD11100F70E55 /* LoginViewController.swift */,
 				A8AB04641B028B8A00F48386 /* MapViewController.swift */,
 				A8AB04661B028BEE00F48386 /* TableViewController.swift */,
@@ -236,6 +239,7 @@
 				A8AB04671B028BEE00F48386 /* TableViewController.swift in Sources */,
 				A84D2A941AF01B3100F70E55 /* OTMClient.swift in Sources */,
 				A84D2A961AF0444D00F70E55 /* OTMConstants.swift in Sources */,
+				A81D1CA41B03E4EB00981A33 /* LocationViewController.swift in Sources */,
 				A84D2A741AEFD11100F70E55 /* AppDelegate.swift in Sources */,
 				A8AB04651B028B8A00F48386 /* MapViewController.swift in Sources */,
 			);
