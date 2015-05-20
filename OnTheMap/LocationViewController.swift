@@ -70,6 +70,8 @@ class LocationViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             }//dispatch
             
         }else{  //address check
+            //Make sure the indicator is white now - We may have recycled from a failed URL commit
+            self.activityIndicator.color = UIColor.whiteColor()
             //Start the acitivty indicator
             self.activityIndicator.startAnimating()
             //Attempt to geocode the location
