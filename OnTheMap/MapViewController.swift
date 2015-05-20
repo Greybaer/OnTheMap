@@ -12,7 +12,9 @@ import CoreLocation
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
+    //MapView
     @IBOutlet weak var mapView: MKMapView!
+    //Logout Button
     @IBOutlet weak var logOutButton: UIBarButtonItem!
     //Right Bar Button Items
     @IBOutlet weak var addLocationButton: UIBarButtonItem!
@@ -21,32 +23,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //***************************************************
-        // Get the Student Location Data and populate the map
-        //***************************************************
-
-        OTMClient.sharedInstance().getStudentLocationData() { (success, errorString) in
-            if errorString != nil{
-                //Display the returned error
-                dispatch_async(dispatch_get_main_queue()){
-                    OTMClient.sharedInstance().errorDialog(self, errTitle: "Failed to retrieve student information", action: "OK", errMsg: errorString!)
-                }//dispatch
-            }else{
-                //We now have the struct populated so we create annotations
-                OTMClient.sharedInstance().getAnnotationData()
-                //and add them to the map
-                dispatch_async(dispatch_get_main_queue()){
-                    self.mapView.addAnnotations(OTMClient.sharedInstance().annotations)
-                }
-            }//else
-        }//getStudentLocationData
-        
-        //Add the two right bar buttons programmatically, as stroyboard won't do the work
+        //Add the two right bar buttons programmatically, as storyboard won't do the work
         self.navigationController!.toolbar.hidden = true
         self.navigationItem.setRightBarButtonItems([reloadDataButton,addLocationButton], animated: true)
      }//viewDidLoad
-    
-    
+   
+    override func viewWillAppear(animated: Bool) {
+        reloadButtonTouch(self)
+    }
     //***************************************************
     // Map delegate Methods
     //***************************************************
@@ -99,21 +83,48 @@ class MapViewController: UIViewController, MKMapViewDelegate {
          }
     }
     
+    
     //***************************************************
     // UI Action functions
     //***************************************************
 
     
     //***************************************************
-    // Reload the user data at the user's request
+    // Load/Reload the user data 
+    // On view appearing or at the user's request
     //***************************************************
     @IBAction func reloadButtonTouch(sender: AnyObject) {
+        // Get the Student Location Data and populate the map
+        // Calling this here because this will auto refresh after location entry
+        
+        OTMClient.sharedInstance().getStudentLocationData() { (success, errorString) in
+            if errorString != nil{
+                //Display the returned error
+                dispatch_async(dispatch_get_main_queue()){
+                    OTMClient.sharedInstance().errorDialog(self, errTitle: "Failed to retrieve student information", action: "OK", errMsg: errorString!)
+                }//dispatch
+            }else{
+                //We now have the struct populated so we create annotations
+                OTMClient.sharedInstance().getAnnotationData()
+                //and add them to the map
+                dispatch_async(dispatch_get_main_queue()){
+                    //Clear the map if needed
+                    let annotationsToRemove = self.mapView.annotations
+                    if annotationsToRemove.count > 0 {
+                        self.mapView.removeAnnotations(annotationsToRemove)
+                    }
+                    self.mapView.addAnnotations(OTMClient.sharedInstance().annotations)
+                }
+            }//else
+        }//getStudentLocationData
     }
     
     //***************************************************
-    //Add A location to the map or list
+    //Display Location View to add user location
     //***************************************************
     @IBAction func addLocationButtonTouch(sender: AnyObject) {
+        let controller = self.storyboard?.instantiateViewControllerWithIdentifier("LocationViewController") as! UIViewController
+        self.navigationController!.presentViewController(controller, animated: true, completion: nil)
     }
 
 
@@ -121,85 +132,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //***************************************************
     // Back to Login, the user wants out
     //***************************************************
-
     @IBAction func mapLogOut(sender: UIBarButtonItem) {
         self.navigationController!.dismissViewControllerAnimated(true, completion: nil)
     }
-
-
-
-
 }//Class
-    
-
-/* 
-These are misc. test functions I used to learn a bit more about map views
-
-//***************************************************
-// Check to see if location services are available.
-// If so, ask for permission to locate ourselves
-//***************************************************
-
-if(CLLocationManager.locationServicesEnabled()){
-//Create a location manager
-locationManager = CLLocationManager()
-// This triggers the didChangeAuthorizationStatus function if not already set
-//And pops up a dialog to get permission
-locationManager.requestWhenInUseAuthorization()
-locationManager.delegate = self
-
-//Set the initial map view
-//let location = locations.last as! CLLocation
-//let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-//let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.25, longitudeDelta: 0.25))
-//self.mapView.setRegion(region, animated: true)
-
-}
-
-//***************************************************
-// Security function to verify the user is OK with us using current location
-//***************************************************
-
-func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-//If the user authorizes the use of location services, this shows the current location
-if status == CLAuthorizationStatus.AuthorizedWhenInUse{
-locationManager.desiredAccuracy = kCLLocationAccuracyBest
-locationManager.startUpdatingLocation()
-//Insert our current location as a test
-//mapView.showsUserLocation = true
-}
-
-//***************************************************
-// Override function to retrieve the current location
-//***************************************************
-
-func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-//This basically forces the map to hover over our location. It's a test, so remove this or comment out
-let location = locations.last as! CLLocation
-let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.25, longitudeDelta: 0.25))
-self.mapView.setRegion(region, animated: true)
-}
-*/*/*/*/*/*/*/
-
-//***************************************************
-// Before we display, get the user data with our id
-//***************************************************
-//OTMClient.sharedInstance().getUdacityInfo() { (success, errorString) in
-//We only care about errors right now
-//    if errorString != nil{
-//Display the returned error
-//       dispatch_async(dispatch_get_main_queue()){
-//           OTMClient.sharedInstance().errorDialog(self, errTitle: "Failed to retrieve user information", action: "OK", errMsg: errorString!)
-//       }//dispatch
-//   }else{
-//NOTE - Here's how we access data in OTMClient!
-//println(OTMClient.sharedInstance().my.FirstName)
-
-//Check to make sure the dialog will show from here - and it does
-//OTMClient.sharedInstance().errorDialog(self, errTitle: "Success", action: "OK", errMsg: "Got my user data")
-
-//   }//if
-//}// getUdacityInfo
-
-

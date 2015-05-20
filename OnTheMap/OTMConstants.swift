@@ -24,8 +24,10 @@ extension OTMClient {
         //***************************************************
 
         //Udacity API
+        static let udacitySignUpURL: String = "https://www.udacity.com/account/auth#!/signup"
         static let UdacitySessionURL: String = "https://www.udacity.com/api/session"
         static let UdacityUserURL: String = "https://www.udacity.com/api/users/"
+        
                
         //Parse API
         static let ParseAPIURL = "https://api.parse.com/1/classes/StudentLocation"

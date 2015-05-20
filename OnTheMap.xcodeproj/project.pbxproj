@@ -92,10 +92,10 @@
 			isa = PBXGroup;
 			children = (
 				A84D2A731AEFD11100F70E55 /* AppDelegate.swift */,
-				A81D1CA31B03E4EB00981A33 /* LocationViewController.swift */,
 				A84D2A751AEFD11100F70E55 /* LoginViewController.swift */,
 				A8AB04641B028B8A00F48386 /* MapViewController.swift */,
 				A8AB04661B028BEE00F48386 /* TableViewController.swift */,
+				A81D1CA31B03E4EB00981A33 /* LocationViewController.swift */,
 				A84D2A931AF01B3100F70E55 /* OTMClient.swift */,
 				A84D2A951AF0444D00F70E55 /* OTMConstants.swift */,
 				A84D2A971AF0477800F70E55 /* OTMConvenience.swift */,
@@ -368,6 +368,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = OnTheMap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -378,6 +379,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = OnTheMap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

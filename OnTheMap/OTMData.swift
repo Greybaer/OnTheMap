@@ -20,9 +20,12 @@ import MapKit
 struct My{
     var FirstName: String? = ""
     var LastName: String? = ""
+    var userID: String? = ""
     var Email: String? = ""
     var mapString: String? = ""
     var Weblink: String? = ""
+    //We'll save the posted location data here when it's entered
+    var annotation: MKPointAnnotation?
 }
 
 //***************************************************

@@ -12,12 +12,14 @@ import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
-    // UI items
+    //TextFields
     @IBOutlet weak var udacityEmail: UITextField!
     @IBOutlet weak var udacityPassword: UITextField!
+    //Burrons
     @IBOutlet weak var udacityLogin: UIButton!
     @IBOutlet weak var udacitySignUp: UIButton!
-    @IBOutlet weak var activityIndivator: UIActivityIndicatorView!
+    //Activity Indicator
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
    
     //***************************************************
     //Variables
@@ -25,13 +27,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
     var appDelegate: AppDelegate!
     var session: NSURLSession!
-
-    //***************************************************
-    // Udacity SignUp URL - declared here so it's easy to 
-    // find and change later if needed
-    //***************************************************
-
-    var udacitySignUpURL: String = "https://www.udacity.com/account/auth#!/signup"
     
     //***************************************************
     //The default housekeeping functions for the controller
@@ -39,7 +34,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
         //Get the app Delegate
         appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -50,8 +44,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //We're the delegate for the textfields
         udacityEmail.delegate = self
         udacityPassword.delegate = self
-        
-
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -62,18 +54,28 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //If we're looping back from logout we want these empty
         udacityEmail.text = ""
         udacityPassword.text = ""
+        //Make the username field the responder by default to avoid having to click
+        udacityEmail.becomeFirstResponder()
         
     }
     
     
     //***************************************************
-    //Delegate functions for the textfields. 
-    //I still like my return solution better than Udacity's touchtap so I'm using it here
+    //Delegate function for the textfields.
     //***************************************************
     
-    //The user hit return, so stop editing and disregard the return key
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        self.view.endEditing(true)
+        //The user hit return, so stop editing and use the signal to change the field focus
+        switch (textField){
+        //This implements textfield entry progressiion without clicks using return.
+        case udacityEmail:
+            udacityEmail.resignFirstResponder()
+            udacityPassword.becomeFirstResponder()
+        default:
+            udacityPassword.resignFirstResponder()
+            udacityLogin.becomeFirstResponder()
+        }//switch
+        //discard the return
         return false
     }
     
@@ -88,7 +90,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     // User wants to create a Udacity Account
     //***************************************************
     @IBAction func showUdacitySignUpPage(sender: AnyObject) {
-        UIApplication.sharedApplication().openURL(NSURL(string: udacitySignUpURL)!)
+        UIApplication.sharedApplication().openURL(NSURL(string: OTMClient.Constants.udacitySignUpURL)!)
     }
 
     
@@ -97,14 +99,24 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     //***************************************************
     @IBAction func loginButtonTouch(sender: UIButton) {
         //Start the acitity indicator
-        activityIndivator.startAnimating()
+        activityIndicator.startAnimating()
         // Call the login verification function
         OTMClient.sharedInstance().doUdacityLogin(udacityEmail.text, password: udacityPassword.text) { (success, error) in
             if success{
+                //Grab our user data for later use
+                OTMClient.sharedInstance().getUdacityInfo() { (success, errorString) in
+                    //We only care about errors right now
+                        if errorString != nil{
+                    //Display the returned error
+                           dispatch_async(dispatch_get_main_queue()){
+                               OTMClient.sharedInstance().errorDialog(self, errTitle: "Failed to retrieve user information", action: "OK", errMsg: errorString!)
+                            }//dispatch
+                    }//erroString
+                    }//getUdacityInfo
                //We're logged in so present the tab controller with map/list
                 dispatch_async(dispatch_get_main_queue(), {
                     //Stop the indicator
-                    self.activityIndivator.stopAnimating()
+                    self.activityIndicator.stopAnimating()
                     let controller = self.storyboard?.instantiateViewControllerWithIdentifier("MapTabViewController") as! UITabBarController
                     //self.navigationController!.pushViewController(controller, animated: true)
                     //Modal presentation makes logout much easier.
@@ -115,12 +127,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 //Display the returned error
                 dispatch_async(dispatch_get_main_queue()){
                     //Stop the indicator
-                    self.activityIndivator.stopAnimating()
+                    self.activityIndicator.stopAnimating()
                     OTMClient.sharedInstance().errorDialog(self, errTitle: "Login Failed" , action: "OK", errMsg: error!)
                 }
             }// error sequence
         }// doUdacityLogin
-    }// loginButtonTouch
-    
+    }// loginButtonTouch    
 }// Class declaration
 

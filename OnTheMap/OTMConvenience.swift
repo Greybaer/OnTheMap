@@ -36,7 +36,6 @@ extension OTMClient{
     // make it look nice
     //***************************************************
     func formatError(error: String) -> String{
-    
         //Check for the telltale colon
         if error.rangeOfString(":") != nil{
             //Break up the string - Should always result in two strings. May want to do better error checkin in the future...

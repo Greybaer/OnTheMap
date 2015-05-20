@@ -10,6 +10,7 @@ import UIKit
 
 class TableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    //Buttons
     @IBOutlet weak var logOutButton: UIBarButtonItem!
     @IBOutlet weak var addLocationButton: UIBarButtonItem!
     @IBOutlet weak var reloadDataButton: UIBarButtonItem!
@@ -22,19 +23,16 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //Add the two right bar buttons programmatically, as storyboard won't do the work
         self.navigationController!.toolbar.hidden = true
         self.navigationItem.setRightBarButtonItems([reloadDataButton,addLocationButton], animated: true)
-        
-        //reload the table
-        dispatch_async(dispatch_get_main_queue()){
-            self.studentTable.reloadData()
-        }
-        
-        
     }//ViewDidLoad
 
+    override func viewWillAppear(animated: Bool) {
+        //Load the most recent table data and populate the table
+        reloadButtonTouch(self)
+    }
+    
     //***************************************************
     //Table Delegate functions
     //***************************************************
-
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return OTMClient.sharedInstance().studentInfo.count
     }
@@ -53,9 +51,6 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //This may help differentiate the multiple duplicates, and it adds value
         //Map location string
         cell.detailTextLabel!.text = "\(student.mapString)"
-        //Make everything look nice
-        //cell.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
-        
         return cell
     }
     
@@ -64,7 +59,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //get the info
         let student = OTMClient.sharedInstance().studentInfo[indexPath.row]
         let app = UIApplication.sharedApplication()
-        //TODO: Need to check for URL validity here - if invalid pop an alert
+        //Check for URL validity - if invalid pop an alert
         if OTMClient.sharedInstance().validateUrl(student.mediaURL) == false{
             dispatch_async(dispatch_get_main_queue()){
                 //If the URL fails pop an alert
@@ -83,10 +78,27 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     @IBAction func addLocationButtonTouch(sender: AnyObject) {
         let controller = self.storyboard?.instantiateViewControllerWithIdentifier("LocationViewController") as! UIViewController
         self.navigationController!.presentViewController(controller, animated: true, completion: nil)
-
     }
     
     @IBAction func reloadButtonTouch(sender: AnyObject) {
+        // Get the Student Location Data and populate the map
+        // Calling this here because this will auto refresh after location entry
+        
+        OTMClient.sharedInstance().getStudentLocationData() { (success, errorString) in
+            if errorString != nil{
+                //Display the returned error
+                dispatch_async(dispatch_get_main_queue()){
+                    OTMClient.sharedInstance().errorDialog(self, errTitle: "Failed to retrieve student information", action: "OK", errMsg: errorString!)
+                }//dispatch
+            }else{
+                //We now have the struct populated so we reload the table data
+                //reload the table
+                dispatch_async(dispatch_get_main_queue()){
+                    self.studentTable.reloadData()
+                }
+            }//else
+        }//getStudentLocationData
+
     }
     
     //***************************************************
